@@ -1,27 +1,32 @@
 import React from 'react';
 import './App.scss';
+import UAParser from 'ua-parser-js';
 
-interface Props {
-  onClick: () => void;
-}
+const getDeviceInfo = () => {
+  const { userAgent } = navigator;
 
-export const Provider: React.FC<Props> = React.memo(
-  ({ onClick, children }) => (
-    <button
-      type="button"
-      onClick={onClick}
-    >
-      {children}
-    </button>
-  ),
-);
+  const parser = new UAParser();
+
+  parser.setUA(userAgent);
+  const result = parser.getResult();
+
+  // eslint-disable-next-line no-console
+  console.log('*** result', result);
+  const deviceType = (result.device && result.device.type) || 'desktop';
+
+  // eslint-disable-next-line no-console
+  console.log('*** device type', deviceType);
+
+  return { deviceType };
+};
 
 export const App: React.FC = () => {
   return (
     <div className="starter">
-      <Provider onClick={() => ({})}>
-        <TodoList />
-      </Provider>
+      <header className="starter-header">
+        <p>Get device Info</p>
+        <button onClick={getDeviceInfo} type="button">Get</button>
+      </header>
     </div>
   );
 };
